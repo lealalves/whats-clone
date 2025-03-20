@@ -38,8 +38,8 @@ fun InfoCard(onDismiss: () -> Unit, innerPadding: PaddingValues, userInfo: Mutab
         ) {
             Text("Informação do Usuário", style = MaterialTheme.typography.headlineSmall)
             Spacer(modifier = Modifier.height(16.dp))
-            Text(text = userInfo.component1().nome, style = MaterialTheme.typography.bodyLarge)
-            Text(userInfo.component1().email, style = MaterialTheme.typography.bodyLarge)
+            Text("Nome: " + userInfo.value.nome, style = MaterialTheme.typography.bodyLarge)
+            Text("E-mail: " + userInfo.value.email, style = MaterialTheme.typography.bodyLarge)
             Spacer(modifier = Modifier.height(16.dp))
             Button(onClick = onDismiss) {
                 Text("Fechar")

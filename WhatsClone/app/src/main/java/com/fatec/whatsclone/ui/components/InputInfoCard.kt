@@ -1,7 +1,9 @@
 package com.fatec.whatsclone.ui.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -30,8 +32,13 @@ import com.fatec.whatsclone.model.UserInfo
 import com.fatec.whatsclone.ui.theme.WhatsCloneTheme
 
 @Composable
-fun InputInfoCard(onDismiss: () -> Unit, innerPadding: PaddingValues, userInfo: MutableState<UserInfo>) {
-    var messageText by remember { mutableStateOf("") }
+fun InputInfoCard(
+    onDismiss: () -> Unit,
+    innerPadding: PaddingValues,
+    userInfo: MutableState<UserInfo>
+) {
+    var nomeText by remember { mutableStateOf("") }
+    var emailText by remember { mutableStateOf("") }
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -50,10 +57,13 @@ fun InputInfoCard(onDismiss: () -> Unit, innerPadding: PaddingValues, userInfo: 
             Spacer(modifier = Modifier.height(16.dp))
             Text("Nome", style = MaterialTheme.typography.titleSmall)
             OutlinedTextField(
-                value = messageText,
-                onValueChange = { messageText = it},
+                value = nomeText,
+                onValueChange = { newText ->
+                    nomeText = newText
+                },
                 modifier = Modifier
                     .padding(8.dp),
+                placeholder = { Text(text = userInfo.value.nome) },
                 shape = RoundedCornerShape(16.dp),
                 colors = OutlinedTextFieldDefaults.colors(
                     unfocusedBorderColor = Color.LightGray,
@@ -61,8 +71,33 @@ fun InputInfoCard(onDismiss: () -> Unit, innerPadding: PaddingValues, userInfo: 
                 )
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = onDismiss) {
-                Text("Fechar")
+            Text("E-mail", style = MaterialTheme.typography.titleSmall)
+            OutlinedTextField(
+                value = emailText,
+                onValueChange = { newText ->
+                    emailText = newText
+                },
+                modifier = Modifier
+                    .padding(8.dp),
+                placeholder = { Text(text = userInfo.value.email) },
+                shape = RoundedCornerShape(16.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedBorderColor = Color.LightGray,
+                    focusedBorderColor = MaterialTheme.colorScheme.primary
+                )
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Row (modifier = Modifier.fillMaxWidth(), Arrangement.SpaceAround){
+                Button(onClick = onDismiss) {
+                    Text("Fechar")
+                }
+                Button(onClick = {
+                    userInfo.value.nome = nomeText
+                    userInfo.value.email = emailText
+                }) {
+                    Text("Salvar")
+                }
+
             }
         }
     }
