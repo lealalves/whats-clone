@@ -1,30 +1,29 @@
 package com.fatec.whatsclone.ui.screens
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.fatec.whatsclone.model.ChatMessage
-import com.fatec.whatsclone.ui.components.ChatMessageItem
+import com.fatec.whatsclone.model.UserInfo
 import com.fatec.whatsclone.ui.components.InfoCard
-import com.fatec.whatsclone.ui.theme.Green40
+import com.fatec.whatsclone.ui.components.Chat
+import com.fatec.whatsclone.ui.components.InputInfoCard
 import com.fatec.whatsclone.ui.theme.WhatsCloneTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WhatsAppScreen() {
+fun BasicWhatsapp() {
+    val defaultUserInfo = UserInfo(email = "leal@leal.com", nome = "Vinicius")
+
     var showInfo by remember { mutableStateOf(false) }
+    var showInputInfo by remember { mutableStateOf(false) }
+    val chatMessages = remember { mutableStateListOf<ChatMessage>() }
+    val userInfo = remember { mutableStateOf(defaultUserInfo) }
+    var messageText by remember { mutableStateOf("") }
+    var currentUser by remember { mutableStateOf(1) }
 
     Scaffold(
         topBar = {
@@ -34,7 +33,7 @@ fun WhatsAppScreen() {
                     IconButton(onClick = { showInfo = true }) {
                         Icon(Icons.Filled.Info, contentDescription = "Info")
                     }
-                    IconButton(onClick = { /* Action for MoreVert icon */ }) {
+                    IconButton(onClick = { showInputInfo = true }) {
                         Icon(Icons.Filled.MoreVert, contentDescription = "More")
                     }
                 }
@@ -42,78 +41,39 @@ fun WhatsAppScreen() {
         },
         content = { innerPadding ->
             if (showInfo) {
-                InfoCard(onDismiss = { showInfo = false }, innerPadding)
+                InfoCard(onDismiss = { showInfo = false }, innerPadding, userInfo)
+            } else if (showInputInfo) {
+                InputInfoCard(onDismiss = { showInputInfo = false }, innerPadding, userInfo)
             } else {
-                WhatsAppChat(innerPadding)
+                Chat(
+                    chatMessages = chatMessages,
+                    messageText = messageText,
+                    currentUser = currentUser,
+                    onMessageChange = { messageText = it },
+                    onSendClick = {
+                        if (messageText.isNotBlank()) {
+                            chatMessages.add(
+                                ChatMessage(
+                                    messageText,
+                                    isSent = true,
+                                    user = currentUser
+                                )
+                            )
+                            messageText = ""
+                            currentUser = if (currentUser == 1) 2 else 1
+                        }
+                    },
+                    innerPadding = innerPadding
+                )
             }
         }
     )
 }
 
-@Composable
-fun WhatsAppChat(innerPadding: PaddingValues) {
-    //= é usado para atribuir um objeto mutableStateListOf à chatMessages, permitindo
-    // que você adicione ou remova mensagens da lista.
-    val chatMessages = remember { mutableStateListOf<ChatMessage>() }
-
-    //by é usado para delegar a propriedade messageText para um objeto mutableStateOf,
-    // que é gerenciado pelo remember. Isso permite que o estado da messageText seja observado
-    // e re-renderize a interface do usuário quando houver alterações.
-    var messageText by remember { mutableStateOf("") }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(innerPadding),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        LazyColumn(modifier = Modifier.weight(1f)) {
-            items(chatMessages) { message ->
-                ChatMessageItem(message)
-            }
-        }
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            OutlinedTextField(
-                value = messageText,
-                onValueChange = { messageText = it },
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(end = 8.dp),
-                placeholder = { Text("Type a message") },
-                shape = RoundedCornerShape(16.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = Color.LightGray,
-                    focusedBorderColor = MaterialTheme.colorScheme.primary
-                )
-            )
-
-            IconButton(onClick = {
-                if (messageText.isNotBlank()) {
-                    chatMessages.add(ChatMessage(messageText, isSent = true))
-                    messageText = "" // Clear the input field
-                }
-            }) {
-                Icon(
-                    imageVector = Icons.Default.Send,
-                    contentDescription = "Send message",
-                    tint = Green40
-                )
-            }
-        }
-    }
-}
-
-
 @Preview(showBackground = true)
 @Composable
 fun WhatsAppScreenPreview() {
     WhatsCloneTheme {
-        WhatsAppScreen()
+        BasicWhatsapp()
     }
 }

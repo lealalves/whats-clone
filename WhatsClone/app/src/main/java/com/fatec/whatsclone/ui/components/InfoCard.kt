@@ -13,12 +13,15 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.fatec.whatsclone.model.UserInfo
 
 @Composable
-fun InfoCard(onDismiss: () -> Unit, innerPadding: PaddingValues) {
+fun InfoCard(onDismiss: () -> Unit, innerPadding: PaddingValues, userInfo: MutableState<UserInfo>) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -35,9 +38,8 @@ fun InfoCard(onDismiss: () -> Unit, innerPadding: PaddingValues) {
         ) {
             Text("Informação do Usuário", style = MaterialTheme.typography.headlineSmall)
             Spacer(modifier = Modifier.height(16.dp))
-            Text("Nome: John Doe", style = MaterialTheme.typography.bodyLarge)
-            Text("Email: john.doe@example.com", style = MaterialTheme.typography.bodyLarge)
-            Text("Telefone: +55 11 99999-9999", style = MaterialTheme.typography.bodyLarge)
+            Text(text = userInfo.component1().nome, style = MaterialTheme.typography.bodyLarge)
+            Text(userInfo.component1().email, style = MaterialTheme.typography.bodyLarge)
             Spacer(modifier = Modifier.height(16.dp))
             Button(onClick = onDismiss) {
                 Text("Fechar")
