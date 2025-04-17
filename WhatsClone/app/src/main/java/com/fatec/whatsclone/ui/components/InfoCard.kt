@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.fatec.whatsclone.model.UserInfo
 
 @Composable
-fun InfoCard(onDismiss: () -> Unit, innerPadding: PaddingValues, userInfo: MutableState<UserInfo>) {
+fun InfoCard(innerPadding: PaddingValues, userInfo: UserInfo) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -38,12 +38,9 @@ fun InfoCard(onDismiss: () -> Unit, innerPadding: PaddingValues, userInfo: Mutab
         ) {
             Text("Informação do Usuário", style = MaterialTheme.typography.headlineSmall)
             Spacer(modifier = Modifier.height(16.dp))
-            Text("Nome: " + userInfo.value.nome, style = MaterialTheme.typography.bodyLarge)
-            Text("E-mail: " + userInfo.value.email, style = MaterialTheme.typography.bodyLarge)
+            Text("Nome: " + userInfo.nome, style = MaterialTheme.typography.bodyLarge)
+            Text("E-mail: " + userInfo.email, style = MaterialTheme.typography.bodyLarge)
             Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = onDismiss) {
-                Text("Fechar")
-            }
         }
     }
 }
